@@ -1,4 +1,7 @@
-﻿namespace User.Presentation.Middleware;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+
+namespace User.Presentation.Middleware;
 
 public class ExceptionHandlingMiddleware
 {
@@ -17,20 +20,44 @@ public class ExceptionHandlingMiddleware
     {
       await _next(context);
     }
-    catch (FluentValidation.ValidationException fvex)
+    catch (ValidationException fvex)
     {
       _logger.LogWarning(fvex, "Błąd walidacji");
-      context.Response.StatusCode = 400;
-      context.Response.ContentType = "application/json";
 
-      var errors = fvex.Errors.Select(e => new
+      var errors = fvex.Errors
+     .GroupBy(e => e.PropertyName)
+     .ToDictionary(
+         g => g.Key,
+         g => g.Select(e => e.ErrorMessage).ToArray()
+     );
+
+      var problemDetails = new ValidationProblemDetails(errors)
       {
-        Field = e.PropertyName,
-        Message = e.ErrorMessage,
-        Code = e.ErrorCode
-      });
+        Type = "https://tools.ietf.org/html/rfc7807",
+        Title = "Błąd walidacji",
+        Status = StatusCodes.Status400BadRequest,
+        Detail = "Wystąpiły błędy walidacyjne w przesłanym żądaniu.",
+        Instance = context.Request.Path
+      };
 
-      await context.Response.WriteAsJsonAsync(new { Errors = errors });
+      context.Response.StatusCode = 400;
+      context.Response.ContentType = "application/problem+json";
+      await context.Response.WriteAsJsonAsync(problemDetails);
+    }
+    catch (UnauthorizedAccessException ex)
+    {
+      var problem = new ProblemDetails
+      {
+        Type = "https://example.com/unauthorized",
+        Title = "Brak autoryzacji",
+        Status = StatusCodes.Status401Unauthorized,
+        Detail = ex.Message,
+        Instance = context.Request.Path
+      };
+
+      context.Response.StatusCode = 401;
+      context.Response.ContentType = "application/problem+json";
+      await context.Response.WriteAsJsonAsync(problem);
     }
     catch (Exception ex)
     {
