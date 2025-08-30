@@ -7,4 +7,6 @@ public interface IUserRepository
   Task DeleteAsync(int id);
   Task<Domain.Entities.User?> GetByIdAsync(int id);
   Task<List<Domain.Entities.User>> GetAllAsync();
+
+  Task<bool> ExistsByEmailAsync(string email);
 }

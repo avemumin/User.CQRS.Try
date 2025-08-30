@@ -30,9 +30,12 @@ public class UserRepository : IUserRepository
     }
   }
 
-  public Task<Domain.Entities.User?> GetByIdAsync(int id)
-      => _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+  public async Task<Domain.Entities.User?> GetByIdAsync(int id)
+      => await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
 
-  public Task<List<Domain.Entities.User>> GetAllAsync()
-      => _db.Users.ToListAsync();
+  public async Task<List<Domain.Entities.User>> GetAllAsync()
+      => await _db.Users.ToListAsync();
+
+  public async Task<bool> ExistsByEmailAsync(string email)
+    => await _db.Users.AnyAsync(u => u.Email == email);
 }
