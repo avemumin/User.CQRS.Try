@@ -22,7 +22,7 @@ public class UsersController : ControllerBase
 
   [HttpPost]
   public async Task Create([FromBody] CreateUser cmd)
-      => await _bus.SendAsync(cmd);
+      => await _bus.InvokeAsync(cmd);
 
   [HttpPut("{id}")]
   public async Task Update(int id, [FromBody] UpdateUser cmd)

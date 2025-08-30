@@ -17,6 +17,8 @@ public class CreateUserValidator : AbstractValidator<CreateUser>
       .EmailAddress();
 
     RuleFor(x => x.Email)
+      .NotEmpty()
+      .EmailAddress()
       .MustAsync(async (email, _) => !await repo.ExistsByEmailAsync(email))
       .WithMessage("Email już istnieje w bazie");
   }

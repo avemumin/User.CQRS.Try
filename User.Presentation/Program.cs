@@ -1,9 +1,10 @@
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using User.Application.Handlers;
 using User.Application.Validators.UserValidators;
 using User.Infrastructure.Interfaces;
 using User.Infrastructure.Persistence;
+using User.Presentation.Middleware;
 using Wolverine;
 using Wolverine.FluentValidation;
 
@@ -22,7 +23,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddControllers();
 
-builder.Services.AddValidatorsFromAssembly(typeof(CreateUserValidator).Assembly);
+//builder.Services.AddValidatorsFromAssembly(typeof(CreateUserValidator).Assembly);
 
 builder.Host.UseWolverine(options =>
 {
@@ -36,9 +37,8 @@ builder.Host.UseWolverine(options =>
 });
 
 
-
 var app = builder.Build();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
