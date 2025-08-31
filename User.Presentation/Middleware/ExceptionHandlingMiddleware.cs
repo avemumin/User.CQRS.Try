@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Text.Json;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace User.Presentation.Middleware;
@@ -42,7 +43,10 @@ public class ExceptionHandlingMiddleware
 
       context.Response.StatusCode = 400;
       context.Response.ContentType = "application/problem+json";
-      await context.Response.WriteAsJsonAsync(problemDetails);
+
+      var json = JsonSerializer.Serialize(problemDetails);
+
+      await context.Response.WriteAsync(json);
     }
     catch (UnauthorizedAccessException ex)
     {
@@ -57,7 +61,11 @@ public class ExceptionHandlingMiddleware
 
       context.Response.StatusCode = 401;
       context.Response.ContentType = "application/problem+json";
-      await context.Response.WriteAsJsonAsync(problem);
+
+      var json = JsonSerializer.Serialize(problem);
+
+      await context.Response.WriteAsync(json);
+
     }
     catch (Exception ex)
     {
