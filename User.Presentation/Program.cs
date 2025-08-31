@@ -13,12 +13,23 @@ public partial class Program
     var builder = WebApplication.CreateBuilder(args);
 
 
-    var connString = builder.Configuration.GetConnectionString("PostDb");
-
-    builder.Services.AddDbContext<AppDbContext>(opt =>
+    if (builder.Environment.IsEnvironment("Testing"))
     {
-      opt.UseSqlServer(connString, sql => sql.MigrationsAssembly("User.Infrastructure"));
-    });
+      builder.Services.AddDbContext<AppDbContext>(testOptions =>
+      {
+        testOptions.UseInMemoryDatabase("TestDb");
+      });
+    }
+    else
+    {
+      var connString = builder.Configuration.GetConnectionString("PostDb");
+      builder.Services.AddDbContext<AppDbContext>(opt =>
+      {
+        opt.UseSqlServer(connString, sql => sql.MigrationsAssembly("User.Infrastructure"));
+      });
+    }
+
+
 
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     // Add services to the container.
