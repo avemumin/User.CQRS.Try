@@ -10,7 +10,12 @@ namespace User.Presentation.Controllers;
 public class UsersController : ControllerBase
 {
   private readonly IMessageBus _bus;
-  public UsersController(IMessageBus bus) => _bus = bus;
+  private readonly ILogger<UsersController> _logger;
+  public UsersController(IMessageBus bus, ILogger<UsersController> logger)
+  {
+    _bus = bus;
+    _logger = logger;
+  }
 
   [HttpGet]
   [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK)]

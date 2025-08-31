@@ -5,14 +5,24 @@ using User.Infrastructure.Persistence;
 using User.Presentation.Middleware;
 using Wolverine;
 using Wolverine.FluentValidation;
+using Serilog;
 
 public partial class Program
 {
   public static void Main(string[] args)
   {
+
+
     var builder = WebApplication.CreateBuilder(args);
+    //Serilog configuration
+    Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(builder.Configuration)
+        .CreateLogger();
+
+    builder.Host.UseSerilog();
 
 
+    //If use Testing do not use production db.
     if (builder.Environment.IsEnvironment("Testing"))
     {
       builder.Services.AddDbContext<AppDbContext>(testOptions =>
@@ -30,7 +40,7 @@ public partial class Program
     }
 
 
-
+    //
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     // Add services to the container.
 
@@ -38,6 +48,7 @@ public partial class Program
 
     //builder.Services.AddValidatorsFromAssembly(typeof(CreateUserValidator).Assembly);
 
+    //Wolverine know where to check Handlers
     builder.Host.UseWolverine(options =>
     {
       options.Discovery.IncludeAssembly(typeof(CreateUserHandler).Assembly);
@@ -51,6 +62,9 @@ public partial class Program
 
 
     var app = builder.Build();
+
+    //Middlewares
+    app.UseMiddleware<LoggingEnrichmentMiddleware>();
     app.UseMiddleware<ExceptionHandlingMiddleware>();
     // Configure the HTTP request pipeline.
 
