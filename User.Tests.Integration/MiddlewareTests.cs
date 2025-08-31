@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using User.Application.DTOs;
 using User.Infrastructure.Persistence;
 
@@ -53,11 +52,9 @@ public class MiddlewareTests : IClassFixture<WebApplicationFactory<Program>>
     };
 
     //Act
-
     var response = await _client.PostAsJsonAsync("api/users", payload);
 
     //Assert
-
     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
 
@@ -72,6 +69,7 @@ public class MiddlewareTests : IClassFixture<WebApplicationFactory<Program>>
   [Fact]
   public async Task Should_Created_User_And_Return_CreatedAction()
   {
+    //Arrange
     var payload = new
     {
       Name = "John",
@@ -80,13 +78,16 @@ public class MiddlewareTests : IClassFixture<WebApplicationFactory<Program>>
       Age = 40
     };
 
+    //Act
     var response = await _client.PostAsJsonAsync("api/users", payload);
 
+    //Assert
     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
     Assert.NotNull(response.Headers.Location);
 
     var user = await response.Content.ReadFromJsonAsync<UserDto>();
+
     Assert.NotNull(user);
     Assert.Equal("John", user.Name);
     Assert.Equal("johnwick@killer.com", user.Email);
