@@ -13,13 +13,19 @@ public class UsersController : ControllerBase
   public UsersController(IMessageBus bus) => _bus = bus;
 
   [HttpGet]
+  [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
   public async Task<ActionResult<List<UserDto>>> GetAll()
   {
     var users = await _bus.InvokeAsync<List<UserDto>>(new GetAllUsers());
+    if (users is null || users.Count == 0)
+      return NoContent();
     return Ok(users);
   }
 
   [HttpGet("{id}")]
+  [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
   public async Task<ActionResult<UserDto>> GetById(int id)
   {
     var user = await _bus.InvokeAsync<UserDto>(new GetUserById(id));
@@ -27,13 +33,18 @@ public class UsersController : ControllerBase
   }
 
   [HttpPost]
+  [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
   public async Task<IActionResult> Create([FromBody] CreateUser cmd)
   {
-    await _bus.InvokeAsync(cmd);
-    return Ok();
+    var createdUser = await _bus.InvokeAsync<UserDto>(cmd);
+    return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
   }
 
   [HttpPut("{id}")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
   public async Task<IActionResult> Update(int id, [FromBody] UpdateUser cmd)
   {
     await _bus.SendAsync(cmd with { Id = id });
@@ -41,6 +52,8 @@ public class UsersController : ControllerBase
   }
 
   [HttpDelete("{id}")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
   public async Task<IActionResult> Delete(int id)
   {
     await _bus.SendAsync(new DeleteUser(id));
