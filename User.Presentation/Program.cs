@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Serilog;
+using User.Application.Common.Helpers;
 using User.Application.Common.Interfaces;
 using User.Application.Handlers;
 using User.Infrastructure.Persistence;
@@ -44,6 +45,7 @@ public partial class Program
     //
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IAuditLogger, AuditLogger>();
+    builder.Services.AddScoped<IAuditBuilder, AuditBuilder>();
     // Add services to the container.
 
     builder.Services.AddControllers();
