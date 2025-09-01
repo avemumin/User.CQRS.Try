@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using User.Infrastructure.Interfaces;
+using User.Application.Common.Interfaces;
+
 
 namespace User.Infrastructure.Persistence;
 

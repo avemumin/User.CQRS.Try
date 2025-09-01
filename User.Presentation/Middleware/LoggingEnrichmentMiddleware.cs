@@ -1,4 +1,5 @@
-﻿using Serilog.Context;
+﻿using System.Diagnostics;
+using Serilog.Context;
 
 namespace User.Presentation.Middleware;
 
@@ -13,7 +14,7 @@ public class LoggingEnrichmentMiddleware
 
   public async Task Invoke(HttpContext context)
   {
-    var traceId = Guid.NewGuid().ToString();
+    var traceId = Activity.Current?.TraceId.ToString() ?? Guid.NewGuid().ToString();
     var user = context.User.Identity?.Name ?? "anonymous";
 
     LogContext.PushProperty("TraceId", traceId);

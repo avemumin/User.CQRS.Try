@@ -1,6 +1,7 @@
 ﻿using User.Application.Commands;
+using User.Application.Common.Interfaces;
 using User.Application.DTOs;
-using User.Infrastructure.Interfaces;
+
 
 namespace User.Application.Handlers;
 

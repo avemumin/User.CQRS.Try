@@ -1,4 +1,4 @@
-﻿namespace User.Infrastructure.Interfaces;
+﻿namespace User.Application.Common.Interfaces;
 
 public interface IUserRepository
 {

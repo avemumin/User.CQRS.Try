@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Serilog;
+using User.Application.Common.Interfaces;
 using User.Application.Handlers;
-using User.Infrastructure.Interfaces;
 using User.Infrastructure.Persistence;
+using User.Infrastructure.Persistence.Audit;
 using User.Presentation.Middleware;
 using Wolverine;
 using Wolverine.FluentValidation;
-using Serilog;
 
 public partial class Program
 {
@@ -42,6 +43,7 @@ public partial class Program
 
     //
     builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<IAuditLogger, AuditLogger>();
     // Add services to the container.
 
     builder.Services.AddControllers();
