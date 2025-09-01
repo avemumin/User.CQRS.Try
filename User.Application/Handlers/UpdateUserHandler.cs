@@ -1,4 +1,5 @@
 ﻿using User.Application.Commands;
+using User.Application.Common.Extension;
 using User.Application.Common.Helpers;
 using User.Application.Common.Interfaces;
 
@@ -9,7 +10,7 @@ public class UpdateUserHandler
   private readonly IUserRepository _repo;
   private readonly IAuditLogger _audit;
   private readonly IAuditBuilder _auditBuilder;
-  public UpdateUserHandler(IUserRepository repo, IAuditLogger audit , IAuditBuilder auditBuilder)
+  public UpdateUserHandler(IUserRepository repo, IAuditLogger audit, IAuditBuilder auditBuilder)
   {
     _repo = repo;
     _audit = audit;
@@ -24,7 +25,7 @@ public class UpdateUserHandler
     user.Update(cmd.Name, cmd.LastName, cmd.Email, cmd.Age);
     await _repo.UpdateAsync(user);
     var auditEntry = _auditBuilder
-      .BuildAudit("TestUser", "EditUser", "User", cmd.Id.ToString(), $"Edited user with ID {cmd.Id}");
+      .BuildAudit("TestUser", cmd.GetAuditActionName(), "User", cmd.Id.ToString(), $"Edited user with ID {cmd.Id}");
 
     await _audit.LogAsync(auditEntry);
   }

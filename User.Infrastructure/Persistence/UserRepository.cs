@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using User.Application.Common.Interfaces;
 
 
@@ -7,7 +8,12 @@ namespace User.Infrastructure.Persistence;
 public class UserRepository : IUserRepository
 {
   private readonly AppDbContext _db;
-  public UserRepository(AppDbContext db) => _db = db;
+  private readonly ILogger<UserRepository> _logger;
+  public UserRepository(AppDbContext db, ILogger<UserRepository> logger)
+  {
+    _db = db;
+    _logger = logger;
+  }
 
   public async Task AddAsync(Domain.Entities.User user)
   {
@@ -23,6 +29,7 @@ public class UserRepository : IUserRepository
 
   public async Task DeleteAsync(int id)
   {
+    _logger.LogDebug("Usuwam użytkownika o ID {UserUd}", id);
     var user = await _db.Users.FindAsync(id);
     if (user is not null)
     {
