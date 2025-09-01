@@ -6,9 +6,9 @@ namespace User.Application.Common.Helpers;
 
 public class AuditBuilder : IAuditBuilder
 {
-  public AuditEntryDto BuildAudit(string userId, string action, string entityType, string entityId, string traceId, string details)
+  public AuditEntryDto BuildAudit(string userId, string action, string entityType, string entityId , string details)
   {
-    traceId = Activity.Current?.TraceId.ToString() ?? Guid.NewGuid().ToString();
+    var traceId = Activity.Current?.TraceId.ToString() ?? Guid.NewGuid().ToString();
     return new AuditEntryDto(userId, action, entityType, entityId, traceId, details);
   }
 }

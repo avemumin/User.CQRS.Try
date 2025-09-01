@@ -20,7 +20,7 @@ public class DeleteUserHandler
   {
     await _repo.DeleteAsync(cmd.Id);
     var auditEntry =  _auditBuilder
-      .BuildAudit("TestUser", "DeleteUser","User",cmd.Id.ToString(),string.Empty, $"Deleted user with ID {cmd.Id}");
+      .BuildAudit("TestUser", "DeleteUser","User",cmd.Id.ToString(), $"Deleted user with ID {cmd.Id}");
    
     await _audit.LogAsync(auditEntry);
   }

@@ -24,7 +24,7 @@ public class UpdateUserHandler
     user.Update(cmd.Name, cmd.LastName, cmd.Email, cmd.Age);
     await _repo.UpdateAsync(user);
     var auditEntry = _auditBuilder
-      .BuildAudit("TestUser", "EditUser", "User", cmd.Id.ToString(), string.Empty, $"Edited user with ID {cmd.Id}");
+      .BuildAudit("TestUser", "EditUser", "User", cmd.Id.ToString(), $"Edited user with ID {cmd.Id}");
 
     await _audit.LogAsync(auditEntry);
   }
