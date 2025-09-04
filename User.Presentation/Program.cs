@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using User.Application.Common.Helpers;
 using User.Application.Common.Interfaces;
 using User.Application.Handlers;
 using User.Infrastructure.Persistence;
 using User.Infrastructure.Persistence.Audit;
+using User.Infrastructure.Persistence.Entities;
+using User.Infrastructure.Persistence.Services;
 using User.Presentation.Middleware;
 using Wolverine;
 using Wolverine.FluentValidation;
@@ -39,6 +42,15 @@ public partial class Program
       {
         opt.UseSqlServer(connString, sql => sql.MigrationsAssembly("User.Infrastructure"));
       });
+
+      builder.Services.AddDbContext<IdentityDbContext>(opt =>
+      {
+        opt.UseSqlServer(connString, sql => sql.MigrationsAssembly("User.Infrastructure"));
+      });
+
+      builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+        .AddEntityFrameworkStores<IdentityDbContext>()
+        .AddDefaultTokenProviders();
     }
 
 
@@ -46,6 +58,7 @@ public partial class Program
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IAuditLogger, AuditLogger>();
     builder.Services.AddScoped<IAuditBuilder, AuditBuilder>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
     // Add services to the container.
 
     builder.Services.AddControllers();
