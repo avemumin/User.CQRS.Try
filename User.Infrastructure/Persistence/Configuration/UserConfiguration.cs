@@ -16,5 +16,6 @@ public class UserConfiguration : IEntityTypeConfiguration<Domain.Entities.User>
     builder.Property(u => u.IdentityUserId)
       .IsRequired()
       .HasMaxLength(450);
+    builder.HasIndex(u => u.IdentityUserId).IsUnique();
   }
 }
