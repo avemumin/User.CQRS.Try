@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Serilog;
 using User.Application.Common.Helpers;
 using User.Application.Common.Interfaces;
 using User.Application.Handlers;
+using User.Infrastructure.Helpers;
 using User.Infrastructure.Persistence;
 using User.Infrastructure.Persistence.Audit;
 using User.Infrastructure.Persistence.Entities;
@@ -17,7 +19,7 @@ using Wolverine.FluentValidation;
 
 public partial class Program
 {
-  public static void Main(string[] args)
+  public static async Task Main(string[] args)
   {
 
 
@@ -72,7 +74,7 @@ public partial class Program
     ValidIssuer = builder.Configuration["Jwt:Issuer"],
     ValidAudience = builder.Configuration["Jwt:Audience"],
     IssuerSigningKey = new SymmetricSecurityKey(
-          Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]))
+          Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
   };
 });
     }
@@ -105,6 +107,12 @@ public partial class Program
 
 
     var app = builder.Build();
+
+    using(var scope = app.Services.CreateScope())
+    {
+      var service = scope.ServiceProvider;
+      await SeedRoles.SeedRolesAsync(service);
+    }
 
     //Middlewares
     app.UseMiddleware<LoggingEnrichmentMiddleware>();
