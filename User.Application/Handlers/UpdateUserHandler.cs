@@ -1,6 +1,5 @@
 ﻿using User.Application.Commands;
 using User.Application.Common.Extension;
-using User.Application.Common.Helpers;
 using User.Application.Common.Interfaces;
 
 namespace User.Application.Handlers;

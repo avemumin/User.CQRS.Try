@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -85,10 +86,28 @@ public partial class Program
     builder.Services.AddScoped<IAuditLogger, AuditLogger>();
     builder.Services.AddScoped<IAuditBuilder, AuditBuilder>();
     builder.Services.AddScoped<IAuthService, AuthService>();
-    builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<ITokenService, TokenService>();
+    builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
+    builder.Services.AddScoped<IAppSettingsService, AppSettingsService>();
     // Add services to the container.
 
+
+    builder.Services.AddCors(options =>
+    {
+      options.AddPolicy("AllowLocalFile", policy =>
+      {
+        policy.SetIsOriginAllowed(origin => origin == "null")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+      });
+    });
+
+    builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+    opt.TokenLifespan = TimeSpan.FromHours(24));
+
+    builder.Services.Configure<EmailConfiguration>(
+    builder.Configuration.GetSection("EmailConfiguration"));
+    
     builder.Services.AddControllers();
 
     //builder.Services.AddValidatorsFromAssembly(typeof(CreateUserValidator).Assembly);
@@ -123,7 +142,7 @@ public partial class Program
 
     app.UseAuthentication();
     app.UseAuthorization();
-
+    app.UseCors("AllowLocalFile");
     app.MapControllers();
 
     app.Run();

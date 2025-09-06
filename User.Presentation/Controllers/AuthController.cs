@@ -17,8 +17,11 @@ namespace User.Presentation.Controllers
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {
-      var token = await _authService.RegisterAsync(registerDto.Email, registerDto.Password);
-      return Ok(new { token });
+      await _authService.RegisterAsync(registerDto);
+      return Ok(new
+      {
+        message = "Rejestracja zakończona. Sprawdź maila i potwierdź konto."
+      });
     }
 
     [HttpPost("login")]
@@ -26,6 +29,13 @@ namespace User.Presentation.Controllers
     {
       var token = await _authService.LoginAsync(loginDto.Email, loginDto.Password);
       return Ok(new { token });
+    }
+
+    [HttpGet("confirm")]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
+    {
+      var confirm = await _authService.ConfirmEmail(userId, token);
+      return Ok(new { confirm });
     }
   }
 }
