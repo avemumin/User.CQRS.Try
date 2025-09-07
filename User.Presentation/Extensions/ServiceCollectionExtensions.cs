@@ -58,13 +58,15 @@ public static class ServiceCollectionExtensions
 
   public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
   {
+    services.AddHttpClient<ITurnstileValidatorService, TurnstileValidatorService>();
+
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IAuditLogger, AuditLogger>();
     services.AddScoped<IAuditBuilder, AuditBuilder>();
     services.AddScoped<IAuthService, AuthService>();
     services.AddScoped<ITokenService, TokenService>();
     services.AddScoped<IAppSettingsService, AppSettingsService>();
-    services.AddScoped<ITurnstileValidatorService, TurnstileValidatorService>();
+   // services.AddScoped<ITurnstileValidatorService, TurnstileValidatorService>();
     
     services.AddTransient<IEmailSender, SmtpEmailSender>();
     

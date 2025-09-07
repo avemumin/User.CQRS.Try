@@ -11,11 +11,12 @@ public class TurnstileValidatorService : ITurnstileValidatorService
   private readonly HttpClient _httpClient;
   private readonly ILogger<TurnstileValidatorService> _logger;
 
-  public TurnstileValidatorService(IAppSettingsService appSettingsService, ILogger<TurnstileValidatorService> logger)
+  public TurnstileValidatorService(IAppSettingsService appSettingsService, ILogger<TurnstileValidatorService> logger, HttpClient httpClient)
   {
     _appSettingsService = appSettingsService;
-    _httpClient = new HttpClient();
+    // _httpClient = new HttpClient();
     _logger = logger;
+    _httpClient = httpClient;
   }
 
   public async Task<bool> ValidateHumanAsync(string token)
