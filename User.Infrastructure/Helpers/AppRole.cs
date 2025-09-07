@@ -1,5 +1,4 @@
 ﻿namespace User.Infrastructure.Helpers;
-
 public enum AppRole
 {
   Admin,
