@@ -8,8 +8,8 @@ public class User
   public string Email { get; private set; } = "";
   public int Age { get; private set; }
 
-  public string IdentityUserId { get; set; }
- 
+  public string IdentityUserId { get; private set; }
+
 
   public User(string name, string lastName, string email, int age)
   {

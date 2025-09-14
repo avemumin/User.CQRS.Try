@@ -78,15 +78,17 @@ public static class ServiceCollectionExtensions
   }
 
 
-  public static IServiceCollection AddCorsPolicy(this IServiceCollection services)
+  public static IServiceCollection AddCorsPolicy(this IServiceCollection services, string my)
   {
     services.AddCors(options =>
     {
-      options.AddPolicy("AllowFrontend", policy =>
+      options.AddPolicy(/*"AllowFrontend"*/my, policy =>
       {
-        policy.WithOrigins("http://127.0.0.1:5500")
+        policy.WithOrigins("https://localhost:7220",
+    "http://localhost:7220",
+    "https://127.0.0.1:7220")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod().AllowCredentials(); ;
       });
       //options.AddPolicy("AllowLocalFile", policy =>
       //{

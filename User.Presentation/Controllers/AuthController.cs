@@ -37,5 +37,11 @@ namespace User.Presentation.Controllers
       var confirm = await _authService.ConfirmEmail(userId, token);
       return Ok(new { confirm });
     }
+
+    [HttpOptions("api/auth/login")]
+    public IActionResult Options()
+    {
+      return Ok();
+    }
   }
 }

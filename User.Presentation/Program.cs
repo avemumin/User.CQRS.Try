@@ -12,7 +12,7 @@ public partial class Program
   {
 
     var builder = WebApplication.CreateBuilder(args);
-
+    var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
     // Logging
     Log.Logger = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
@@ -22,7 +22,7 @@ public partial class Program
     // Services
     builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
     builder.Services.AddApplicationServices(builder.Configuration);
-    builder.Services.AddCorsPolicy();
+    builder.Services.AddCorsPolicy(MyAllowSpecificOrigins);
     builder.Services.AddControllers();
 
     // Wolverine
@@ -49,9 +49,11 @@ public partial class Program
     app.UseMiddleware<LoggingEnrichmentMiddleware>();
     app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseHttpsRedirection();
+    app.UseCors(MyAllowSpecificOrigins);
     app.UseAuthentication();
     app.UseAuthorization();
-    app.UseCors("AllowFrontend");
+    
+   // app.UseCors("AllowFrontend");
     //app.UseCors("AllowLocalFile");
     app.MapControllers();
 
